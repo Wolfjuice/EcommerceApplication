@@ -30,86 +30,99 @@ public class TestingUserController {
 
         User user = new User();
         Cart cart = new Cart();
-        user.setId(0);
-        user.setUsername("test");
-        user.setPassword("testPassword");
+        user.setId(1L);
+        user.setUsername("Lion");
+        user.setPassword("jungleking");
         user.setCart(cart);
-        when(userRepository.findByUsername("test")).thenReturn(user);
-        when(userRepository.findById(0L)).thenReturn(java.util.Optional.of(user));
-        when(userRepository.findByUsername("someone")).thenReturn(null);
+        when(userRepository.findByUsername("Lion")).thenReturn(user);
+        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(user));
+        when(userRepository.findByUsername("Leopard")).thenReturn(null);
 
     }
 
     @Test
-    public void create_user_happy_path() {
-        when(encoder.encode("testPassword")).thenReturn("thisIsHashed");
+    public void rawr() {
+        when(encoder.encode("jungleking")).thenReturn("thisIsHashed");
         CreateUserRequest r = new CreateUserRequest();
-        r.setUsername("test");
-        r.setPassword("testPassword");
-        r.setConfirmPassword("testPassword");
+        r.setUsername("Lion");
+        r.setPassword("jungleking");
+        r.setConfirmPassword("jungleking");
         final ResponseEntity<User> response = userController.createUser(r);
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
         User u = response.getBody();
         assertNotNull(u);
-        assertEquals(0, u.getId());
-        assertEquals("test", u.getUsername());
+        assertEquals(1, u.getId());
+        assertEquals("Lion", u.getUsername());
         assertEquals("thisIsHashed", u.getPassword());
 
     }
 
     @Test
-    public void create_user_password_too_short() {
+    public void passwordTooShort() {
         CreateUserRequest r = new CreateUserRequest();
-        r.setUsername("test");
-        r.setPassword("short");
-        r.setConfirmPassword("short");
+        r.setUsername("Lion");
+        r.setPassword("mooot");
+        r.setConfirmPassword("mooot");
         final ResponseEntity<User> response = userController.createUser(r);
         assertNotNull(response);
         assertEquals(400, response.getStatusCodeValue());
     }
 
     @Test
-    public void create_user_password_confirm_mismatch() {
+    public void passwordDontMatch() {
         CreateUserRequest r = new CreateUserRequest();
-        r.setUsername("test");
-        r.setPassword("alongpassword");
-        r.setConfirmPassword("aLongpassWord");
+        r.setUsername("Lion");
+        r.setPassword("jungleking");
+        r.setConfirmPassword("bungleking");
         final ResponseEntity<User> response = userController.createUser(r);
         assertNotNull(response);
         assertEquals(400, response.getStatusCodeValue());
     }
 
     @Test
-    public void find_user_by_name_happy_path() {
-        final ResponseEntity<User> response = userController.findByUserName("test");
+    public void animalFoundByName() {
+        final ResponseEntity<User> response = userController.findByUserName("Lion");
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
         User u = response.getBody();
         assertNotNull(u);
-        assertEquals("test", u.getUsername());
+        assertEquals("Lion", u.getUsername());
     }
 
     @Test
-    public void find_user_by_name_doesnt_exist() {
-        final ResponseEntity<User> response = userController.findByUserName("someone");
+    public void animalNotFoundByName() {
+        final ResponseEntity<User> response = userController.findByUserName("Leopard");
+        assertNotNull(response);
+        assertEquals(404, response.getStatusCodeValue());
+    }
+    @Test
+    public void animalAlsoNotFoundByName() {
+        final ResponseEntity<User> response = userController.findByUserName("Elephant");
         assertNotNull(response);
         assertEquals(404, response.getStatusCodeValue());
     }
 
     @Test
-    public void find_user_by_id_happy_path() {
-        final ResponseEntity<User> response = userController.findById(0L);
+    public void animalFoundById() {
+        final ResponseEntity<User> response = userController.findById(1L);
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
         User u = response.getBody();
         assertNotNull(u);
-        assertEquals(0, u.getId());;
+        assertEquals(1, u.getId());;
     }
 
     @Test
-    public void find_user_by_id_doesnt_exist() {
-        final ResponseEntity<User> response = userController.findById(1L);
+    public void animalNotFoundById() {
+        final ResponseEntity<User> response = userController.findById(2L);
+        assertNotNull(response);
+        assertEquals(404, response.getStatusCodeValue());
+    }
+
+    @Test
+    public void animalAlsoNotFoundById() {
+        final ResponseEntity<User> response = userController.findById(6L);
         assertNotNull(response);
         assertEquals(404, response.getStatusCodeValue());
     }

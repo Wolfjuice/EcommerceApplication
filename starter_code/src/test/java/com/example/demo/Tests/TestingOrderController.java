@@ -31,32 +31,32 @@ public class TestingOrderController {
 
         Item item = new Item();
         item.setId(1L);
-        item.setName("Round Widget");
-        BigDecimal price = BigDecimal.valueOf(2.99);
+        item.setName("Beef");
+        BigDecimal price = BigDecimal.valueOf(4.00);
         item.setPrice(price);
-        item.setDescription("A widget that is round");
+        item.setDescription("Meat From a cow");
         List<Item> items = new ArrayList<Item>();
         items.add(item);
 
         User user = new User();
         Cart cart = new Cart();
-        user.setId(0);
-        user.setUsername("test");
-        user.setPassword("testPassword");
-        cart.setId(0L);
+        user.setId(1);
+        user.setUsername("me");
+        user.setPassword("here_i_am");
+        cart.setId(1L);
         cart.setUser(user);
         cart.setItems(items);
-        BigDecimal total = BigDecimal.valueOf(2.99);
+        BigDecimal total = BigDecimal.valueOf(4.00);
         cart.setTotal(total);
         user.setCart(cart);
-        when(userRepository.findByUsername("test")).thenReturn(user);
-        when(userRepository.findByUsername("someone")).thenReturn(null);
+        when(userRepository.findByUsername("me")).thenReturn(user);
+        when(userRepository.findByUsername("not_me")).thenReturn(null);
 
     }
 
     @Test
-    public void submit_order_happy_path() {
-        ResponseEntity<UserOrder> response = orderController.submit("test");
+    public void iDidOrder() {
+        ResponseEntity<UserOrder> response = orderController.submit("me");
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
         UserOrder order = response.getBody();
@@ -65,27 +65,31 @@ public class TestingOrderController {
     }
 
     @Test
-    public void submit_order_user_not_found() {
-        ResponseEntity<UserOrder> response = orderController.submit("someone");
+    public void iDidNotOrder() {
+        ResponseEntity<UserOrder> response = orderController.submit("not_me");
         assertNotNull(response);
         assertEquals(404, response.getStatusCodeValue());
     }
 
     @Test
-    public void get_orders_for_user_happy_path() {
-        ResponseEntity<List<UserOrder>> ordersForUser = orderController.getOrdersForUser("test");
+    public void iOrderedAndICanProveIt() {
+        ResponseEntity<List<UserOrder>> ordersForUser = orderController.getOrdersForUser("me");
         assertNotNull(ordersForUser);
         assertEquals(200, ordersForUser.getStatusCodeValue());
         List<UserOrder> orders = ordersForUser.getBody();
         assertNotNull(orders);
-
     }
 
     @Test
-    public void get_orders_for_user_not_found() {
-        ResponseEntity<List<UserOrder>> ordersForUser = orderController.getOrdersForUser("someone");
+    public void iDidNotOrderThereforeNothing() {
+        ResponseEntity<List<UserOrder>> ordersForUser = orderController.getOrdersForUser("not_me");
         assertNotNull(ordersForUser);
         assertEquals(404, ordersForUser.getStatusCodeValue());
-
+    }
+    @Test
+    public void ohNoIDidntOrderUnderMyName() {
+        ResponseEntity<List<UserOrder>> ordersForUser = orderController.getOrdersForUser("whiefnweifnwejnew");
+        assertNotNull(ordersForUser);
+        assertEquals(404, ordersForUser.getStatusCodeValue());
     }
 }
