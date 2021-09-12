@@ -36,7 +36,7 @@ public class User {
 	}
 
 	@Column(nullable = false)
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
 	
 	@OneToOne(cascade = CascadeType.ALL)
